@@ -52,6 +52,8 @@ bot.on('inline_query', async ctx => {
 
         function createMatrix(elements) {     
             let matrix = [];
+            if (elements.length < 1) return [[{switch_inline_query_current_chat: ' ', text: 'Search another Pokémon'}]]
+            if (elements.length < 2) return [[{switch_inline_query_current_chat: elements[0].species, text: `Lookup ${elements[0].species}`}], [{switch_inline_query_current_chat: ' ', text: 'Search another Pokémon'}]]
             for (let i = 0; i < elements.length; i += 2) {
                 let el1 = elements[i];
                 let el2 = elements[i + 1];
