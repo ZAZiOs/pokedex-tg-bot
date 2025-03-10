@@ -20,11 +20,11 @@ Welcome to the Pokédex Telegram Bot! This bot allows you to get information abo
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/yourusername/pokedexbot.git
+    git clone https://github.com/ZAZiOs/pokedex-tg-bot.git
     ```
 2. Navigate to the project directory:
     ```sh
-    cd pokedexbot
+    cd pokedex-tg-bot
     ```
 3. Install the dependencies:
     ```sh
@@ -35,7 +35,7 @@ Welcome to the Pokédex Telegram Bot! This bot allows you to get information abo
 
 1. Create a `.env` file in the root directory and add your Telegram bot token:
     ```env
-    TELEGRAM_TOKEN=your-telegram-bot-token
+    BOT_TOKEN=your-telegram-bot-token
     ```
 
 ### Usage
