@@ -13,7 +13,8 @@ const ctch = (err) => {console.log(err)}
 
 export const getInfo = async (pokemon) => {
     try {
-    let pokeData = (await axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemon.toLowerCase()}`).catch(ctch)).data
+    let pokeData = (await axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemon.toLowerCase()}`).catch(() => {}))?.data
+    if (!pokeData) return {error: 404}
     let pokeSpecies = (await axios.get(pokeData.species.url).catch(ctch)).data
     let pokeEvolution = (await axios.get(pokeSpecies.evolution_chain.url).catch(ctch)).data
     let pokeType = (await axios.get(pokeData.types[0].type.url).catch(ctch)).data

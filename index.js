@@ -6,8 +6,7 @@ import { getInfo } from './createresp.js'
 // prefuncs
 
 let pokenames = []
-let maxpoke = 0
-axios.get(`https://pokeapi.co/api/v2/pokemon?limit=100000`).then(res => {pokenames = res.data.results.map(pokemon => pokemon.name); maxpoke = res.data.count})
+axios.get(`https://pokeapi.co/api/v2/pokemon?limit=100000`).then(res => {pokenames = res.data.results.map(pokemon => pokemon.name);})
 
 const ctch = (err) => {console.log(err)}
 
@@ -35,25 +34,37 @@ Enjoy!
 bot.on('inline_query', async ctx => {
     let { query } = ctx.inlineQuery
     query = query.replace(/^0+/, "")
-    if ((Number(query) > 0 && Number(query) <= maxpoke) || (pokenames.indexOf(query.toLowerCase()) + 1)) {
+    if (Number(query) > 0 || (pokenames.indexOf(query.toLowerCase()) + 1)) {
         let data = await getInfo(query)
         if (data.error) {
-            return ctx.answerInlineQuery([
-                {
-                    type: 'article',
-                    id: '0',
+            if (data.error == 404) {
+                return ctx.answerInlineQuery([{
+                        type: 'article', id: 'err404',
+                        title: 'This pokemon was not found.',
+                        input_message_content: {
+                            message_text: 'Server returned no response!\nYour query: <b>' + query + '</b>',
+                            parse_mode: "HTML"
+                        }
+                    }], {cache_time: 0}).catch(ctch)
+            }
+            return ctx.answerInlineQuery([{
+                    type: 'article', id: 'errUnk',
                     title: 'An error occured. Try again pls!',
                     input_message_content: {
-                        message_text: 'An error occured. Try again pls!\nYour query: <b>' + query + '</b>'
+                        message_text: 'An error occured. Try again pls!\nYour query: <b>' + query + '</b>',
+                        parse_mode: "HTML"
                     }
-                }
-            ], {cache_time: 0}).catch(ctch)
+                }], {cache_time: 0}).catch(ctch)
         }
 
         function createMatrix(elements) {     
             let matrix = [];
             if (elements.length < 1) return [[{switch_inline_query_current_chat: ' ', text: 'Search another Pokémon'}]]
-            if (elements.length < 2) return [[{switch_inline_query_current_chat: elements[0].species, text: `Lookup ${elements[0].species}`}], [{switch_inline_query_current_chat: ' ', text: 'Search another Pokémon'}]]
+            if (elements.length < 2) {
+                let el1 = elements[0].species
+                if (el1 == data.name) el1 = elements[0].was
+                return [[{switch_inline_query_current_chat: el1, text: `Lookup ${el1}`}], [{switch_inline_query_current_chat: ' ', text: 'Search another Pokémon'}]]
+            }
             for (let i = 0; i < elements.length; i += 2) {
                 let el1 = elements[i];
                 let el2 = elements[i + 1];
@@ -75,7 +86,10 @@ bot.on('inline_query', async ctx => {
             return `${was} → <b>${species}</b>\n`+
                    `Triggered by <b>${trigger}</b>\n` +
                    `Required to trigger: <b>${value}</b>\n\n`
-        })
+        }).join('')
+
+        if (evolution_tree) evolution_tree = `<b>----- Evolution chain -----</b>\n` +  evolution_tree // Fuck this, doing bad way.
+
 
         ctx.answerInlineQuery([
             {
@@ -96,7 +110,7 @@ bot.on('inline_query', async ctx => {
 
                          `<b>Abilities:</b> \n- <b>${data.abilities.join('</b>\n- <b>')}</b>\n\n` +
 
-                         `<b>----- Evolution chain -----</b>\n${evolution_tree.join('')}`,
+                         evolution_tree,
                 parse_mode: 'HTML',
                 reply_markup
             }
