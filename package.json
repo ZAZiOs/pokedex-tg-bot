@@ -1,0 +1,22 @@
+{
+  "name": "pokedexbot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "nodemon createresp.js --legacy-watch -e js",
+    "start": "nodemon . --legacy-watch -e js",
+    "unix": "nodemon -x 'node index.js || touch index.js'",
+    "win": "nodemon --legacy-watch -x \"node index.js || copy /b index.js +,,\""
+  },
+  "keywords": [],
+  "author": "ZAZiOs",
+  "license": "MIT",
+  "description": "",
+  "dependencies": {
+    "axios": "^1.8.2",
+    "dotenv": "^16.4.7",
+    "nodemon": "^3.1.9",
+    "telegraf": "^4.16.3"
+  }
+}
